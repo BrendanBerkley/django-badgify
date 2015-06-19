@@ -8,7 +8,7 @@ with open(os.path.join(root, 'README.rst')) as f:
     README = f.read()
 
 setup(
-    name='django-badgify',
+    name='django-badgify-lab',
     version='0.1.5',
     description='A reusable application to create your own badge engine using Django',
     long_description=README,
