@@ -1,21 +1,11 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import logging
+
+from importlib import import_module
 
 from django.core import exceptions
 from django.db import connection
 
-try:
-    # py27 / py3 only
-    from importlib import import_module
-except ImportError:
-    from django.utils.importlib import import_module
-
-try:  # 2.x
-    _range = xrange
-except NameError:  # 3.x
-    _range = range
+import six
 
 from . import settings
 
@@ -27,13 +17,6 @@ CLASS_PATH_ERROR = 'django-badgify is unable to interpret settings value for %s.
                    '(\'path.to.models.Class\', \'app_label\').'
 
 
-# Python 3 workaround
-try:
-    basestring
-except NameError:
-    basestring = str
-
-
 def load_class(class_path, setting_name=None):
     """
     Loads a class given a class_path. The setting value may be a string or a
@@ -42,10 +25,10 @@ def load_class(class_path, setting_name=None):
 
     Borrowed from: https://github.com/thoas/django-discussions/blob/master/discussions/utils.py
     """
-    if not isinstance(class_path, basestring):
+    if not isinstance(class_path, six.string_types):
         try:
             class_path, app_label = class_path
-        except:
+        except Exception:
             if setting_name:
                 raise exceptions.ImproperlyConfigured(CLASS_PATH_ERROR % (
                     setting_name, setting_name))
@@ -99,7 +82,7 @@ def get_model_string(model_name):
     class_path = getattr(settings, setting_name, None)
     if not class_path:
         return 'badgify.%s' % model_name
-    elif isinstance(class_path, basestring):
+    elif isinstance(class_path, str):
         parts = class_path.split('.')
         try:
             index = parts.index('models') - 1
@@ -111,7 +94,7 @@ def get_model_string(model_name):
         try:
             class_path, app_label = class_path
             model_name = class_path.split('.')[-1]
-        except:
+        except Exception:
             raise exceptions.ImproperlyConfigured(CLASS_PATH_ERROR % (
                 setting_name, setting_name))
     return '%s.%s' % (app_label, model_name)
@@ -121,7 +104,7 @@ def chunks(l, n):
     """
     Yields successive n-sized chunks from l.
     """
-    for i in _range(0, len(l), n):
+    for i in range(0, len(l), n):
         yield l[i:i + n]
 
 

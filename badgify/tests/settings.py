@@ -1,17 +1,11 @@
-# -*- coding: utf-8 -*-
 import os
-import django
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'NAME': ':memory:',
     }
 }
 
@@ -19,7 +13,14 @@ SITE_ID = 1
 
 DEBUG = True
 
-MIDDLEWARE_CLASSES = ()
+MIDDLEWARE = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.messages',
     'badgify',
     'badgify.tests',
 ]
@@ -42,9 +44,24 @@ SECRET_KEY = 'blabla'
 
 ROOT_URLCONF = 'badgify.urls'
 
-TEMPLATE_DIRS = (
-    os.path.join(ROOT, 'templates'),
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 LOGGING = {
     'version': 1,
@@ -68,9 +85,3 @@ LOGGING = {
         },
     },
 }
-
-if django.VERSION < (1, 6):
-    TEST_RUNNER = 'discover_runner.DiscoverRunner'
-if django.VERSION < (1, 7):
-    SOUTH_MIGRATION_MODULES = {'badgify': 'badgify.south_migrations'}
-    INSTALLED_APPS.append('south')

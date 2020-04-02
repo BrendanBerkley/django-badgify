@@ -32,11 +32,7 @@ Synchronize the database:
 
 .. code-block:: bash
 
-    # Django < 1.7
-    $ python manage.py syncdb
-
-    # Django >= 1.7
-    $ python manage.py migrate
+    $ python manage.py migrate badgify
 
 Create a ``badgify_recipes.py`` file in your Django application:
 
@@ -154,13 +150,13 @@ Example:
         """
         People loving Java.
         """
-        name = 'JS Lover'
-        slug = 'js-lover'
-        description = 'People loving JS programming language'
+        name = 'Java Lover'
+        slug = 'java-lover'
+        description = 'People loving Java programming language'
 
         @property
         def image(self):
-            return staticfiles_storage.open('js-lover.png')
+            return staticfiles_storage.open('java-lover.png')
 
 
     badgify.register([
@@ -248,6 +244,31 @@ Without any argument, displays all badges. Otherwise, badges awarded by the give
     {% for badge in badges %}
         {{ badge.name }}
     {% endfor %}
+
+Views
+-----
+
+**django-badgify** provides two views:
+
+* ``badgify.views.BadgifyListView``: displays all badges as paginated list
+* ``badgify.views.BadgifyDetailView``: displays awarded users as paginated list for a given badge
+
+This application does not include templates. It lets you implement
+templates as you like (see example project).
+
+To include these two views, include the provided ``badgify.urls``:
+
+.. code-block:: python
+
+    # -*- coding: utf-8 -*-
+    from django.conf.urls import include, url
+
+    urlpatterns = [
+        # Your other includes
+        url(r'^badges/', include('badgify.urls')),
+    ]
+
+See example project for more details.
 
 Custom Models
 -------------
@@ -361,12 +382,5 @@ Contribute
     $ make test
 
     # Launch example project
+    $ make create_fixtures
     $ make serve
-
-Compatibility
--------------
-
-- Python 2.6: Django 1.5, 1.6
-- python 2.7: Django 1.5, 1.6, 1.7, 1.8
-- Python 3.3: Django 1.5, 1.6, 1.7, 1.8
-- Python 3.4: Django 1.5, 1.6, 1.7, 1.8

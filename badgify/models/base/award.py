@@ -1,15 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _
 
 from badgify import compat
+from badgify.compat import gettext_lazy as _
 from badgify.utils import get_model_string
 
 
-@python_2_unicode_compatible
 class Award(models.Model):
     """
     An Award.
@@ -17,11 +12,13 @@ class Award(models.Model):
     user = models.ForeignKey(
         compat.AUTH_USER_MODEL,
         verbose_name=_('user'),
+        on_delete=models.CASCADE,
         related_name='badges')
 
     badge = models.ForeignKey(
         get_model_string('Badge'),
         verbose_name=_('badge'),
+        on_delete=models.CASCADE,
         related_name='awards')
 
     awarded_at = models.DateTimeField(
